@@ -162,7 +162,7 @@ def test_short_password(driver, email):
     except NoSuchElementException:
         print("❌ 짧은 비밀번호 오류 메시지를 찾지 못했음")
         assert False, "Short password test failed - error message not found"    
-print("testfie")
+
 
 
     

@@ -64,6 +64,7 @@ def not_email_test():
         time.sleep(2)
         driver.quit()
 
+
 if __name__ == "__main__":
     print("Test 1: 이메일 공란 테스트")
     not_email_test()
