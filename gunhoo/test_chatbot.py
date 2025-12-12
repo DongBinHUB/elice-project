@@ -48,30 +48,78 @@ def test_login(browser): # 테스트 시작 시 자동으로 로그인 처리
     time.sleep(2)  # 로그인 안정화 대기
 
 # -----------------------------
-# 기본 챗봇 입력 테스트
+# 테스트할 질문 목록
 # -----------------------------
-def test_chat_input(browser):
+QUESTIONS = [
+    ("TC-CHAT-001", "사과가 뭐야?"),
+    ("TC-CHAT-002", "사과는 어떻게 수확해?"),
+    ("TC-CHAT-003", "교과서의 정의는?"),
+]
+
+
+# -----------------------------
+# 여러 질문을 자동 반복 테스트
+# -----------------------------
+@pytest.mark.parametrize("tc_id, question", QUESTIONS)
+def test_chatbot_multiple(browser, tc_id, question):
+    tester = ChatBotTester(browser)
+
+    # 1) 질문 전송
+    tester.send_message(question)
+
+    # 2) 챗봇 답변 완료까지 대기
+    tester.wait_for_answer(min_wait_time=5)
+
+    # 3) 답변 추출
+    answer = tester.get_answer()
+
+    # 4) JSON 저장
+    save_json(f"{tc_id}.json", {"question": question, "answer": answer})
+
+    # 5) 새 대화로 초기화
+    tester.new_chat()
+
+    time.sleep(1)
+
+
+def test_chat_continuous_three(browser):
     """
-    기본 챗봇 입력 테스트:
-    1) 질문 전송
-    2) 챗봇 답변 대기
-    3) 답변 추출
-    4) JSON 저장
-    5) 새 대화 페이지로 리셋
+    한 대화방에서 3개의 질문을 연속으로 묻고
+    답변 3개를 하나의 JSON에 묶어서 저장하는 테스트
     """
     tester = ChatBotTester(browser)
 
-    question = "사과가 뭐야?"
-    tester.send_message(question)
-    tester.wait_for_answer(selector=".elice-aichat__markdown", min_wait_time=5)
+    questions = [
+        ("TC-CHAT-CONT-001-1", "체인소맨 : 레제편 영화를 보고 왔어"),
+        ("TC-CHAT-CONT-001-2", "그 영화의 평은 어떤지 알아?"),
+        ("TC-CHAT-CONT-001-3", "비슷한 느낌의 영화가 있을까?"),
+    ]
 
-    # 챗봇 답변 추출
-    answer = tester.get_answer()
+    results = {}  # 3개의 질문+답변을 모두 저장할 dict
 
-    # JSON 파일 저장
-    save_json("TC-CHAT-001.json", {"question": question, "answer": answer})
+    for tc_id, q in questions:
+        # 질문 전송
+        tester.send_message(q)
 
-    # 새 대화 화면으로 이동
+        # 답변 대기
+        tester.wait_for_answer(min_wait_time=5, max_wait_time=180)
+
+        # 답변 추출
+        answer = tester.get_answer()
+
+        # 메모리에 저장
+        results[tc_id] = {
+            "question": q,
+            "answer": answer
+        }
+
+        # 중요: 새 채팅이 아님! (연속 질문)
+        time.sleep(1)
+
+    # 최종 JSON 파일 저장
+    save_json("TC-CHAT-004.json", results)
+
+    # 마지막에 새 대화로 초기화해놓기 (다음 테스트 대비)
     tester.new_chat()
 
-    time.sleep(3)
+    time.sleep(1)

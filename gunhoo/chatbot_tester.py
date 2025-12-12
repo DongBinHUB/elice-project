@@ -22,34 +22,55 @@ class ChatBotTester:
         textarea.send_keys(message)
         textarea.send_keys(Keys.ENTER)
 
-    # ------------------------------------------------
-    # 2. 답변 완료까지 대기하는 동작
-    # ------------------------------------------------
-    def wait_for_answer(self, selector=".elice-aichat__markdown", min_wait_time=10):
-        start_time = time.time()
-        previous_text = ""
-        """
-        챗봇 답변이 끝날 때까지 기다리는 로직.
-        - 일정 시간(min_wait_time) 동안 텍스트 변화 감지
-        - 변화가 멈추면 '답변 완료'로 판단
-        """
-        while True:
-            current_text = self.browser.find_element(By.CSS_SELECTOR, selector).text
-            # 텍스트 변화 여부 체크
-            text_changed = (current_text != previous_text)
-            previous_text = current_text
+def wait_for_answer(
+    self,
+    spinner_selector=".elice-aichat__spinner",
+    answer_selector=".elice-aichat__markdown",
+    stable_duration=1.0
+):
+    """
+    가장 안정적인 챗봇 답변 대기 방식:
+    1) 로딩 스피너가 사라질 때까지 대기
+    2) 답변 텍스트 요소가 나타날 때까지 대기
+    3) 텍스트가 일정 시간(stable_duration) 동안 변하지 않으면 완료
+    """
 
-            elapsed = time.time() - start_time
+    # ------------------------------------
+    # 1) 로딩 스피너가 사라질 때까지 대기
+    # ------------------------------------
+    while True:
+        try:
+            self.browser.find_element(By.CSS_SELECTOR, spinner_selector)
+            time.sleep(0.2)
+        except:
+            break  # 스피너가 없어짐 → 다음 단계 진행
 
-            # 최소 대기 시간 전에는 무조건 대기
-            if elapsed < min_wait_time:
-                time.sleep(1)
-                continue
-            # min_wait_time 이후 더 이상 텍스트가 변하지 않으면 완료        
-            if not text_changed:
+    # ------------------------------------
+    # 2) 답변 텍스트가 나타날 때까지 대기
+    # ------------------------------------
+    WebDriverWait(self.browser, 60).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, answer_selector))
+    )
+
+    # ------------------------------------
+    # 3) 텍스트 안정화 대기
+    # ------------------------------------
+    prev_text = ""
+    stable_start = None
+
+    while True:
+        current_text = self.browser.find_element(By.CSS_SELECTOR, answer_selector).text
+
+        if current_text != prev_text:
+            prev_text = current_text
+            stable_start = time.time()  # 변화 시작
+        else:
+            # 일정 시간 동안 변화 없으면 끝
+            if stable_start and (time.time() - stable_start) >= stable_duration:
                 break
 
-            time.sleep(1)
+        time.sleep(0.2)
+
 
     # ------------------------------------------------
     # 3. 챗봇 답변 가져오기
