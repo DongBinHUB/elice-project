@@ -1,0 +1,9 @@
+{
+    "tc_id": "TC-CHAT-007",
+    "results": [
+        {
+            "question": "인공지능 기술은 최근 10년 사이 비약적으로 발전했다. \n            특히 언어 모델과 컴퓨터 비전 분야의 기술 성장은 \n            다양한 산업에서 혁신적인 변화를 이끌어내고 있다.\n\n            이 문장을 두 문장으로 요약 후, 자연스럽게 영어로 번역해줘",
+            "answer": "🇰🇷 두 문장 요약\n인공지능 기술은 최근 10년 사이에 비약적으로 발전했다.\n특히 언어 모델과 컴퓨터 비전 기술의 성장은 다양한 산업에서 혁신적인 변화를 이끌고 있다.\n🇺🇸 자연스러운 영어 번역\nArtificial intelligence technology has advanced dramatically over the past decade.\nIn particular, the growth of language models and computer vision has been driving transformative innovation across various industries.\n다른 글도 이런 방식으로 요약·번역해볼까요? 🙂"
+        }
+    ]
+}

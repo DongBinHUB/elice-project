@@ -17,72 +17,101 @@ class ChatBotTester:
     # 1. 메시지 전송
     # ------------------------------------------------
 
-    def send_message(self, message): #챗봇 입력창에 텍스트를 입력하고 엔터를 눌러 전송
+    def send_message(self, message):
         textarea = self.browser.find_element(By.CSS_SELECTOR, "textarea[name='input']")
-        textarea.send_keys(message)
+
+        for line in message.split("\n"):
+            textarea.send_keys(line)
+            textarea.send_keys(Keys.SHIFT, Keys.ENTER)
+
+        # 마지막에만 Enter → 전송
         textarea.send_keys(Keys.ENTER)
 
-def wait_for_answer(
-    self,
-    spinner_selector=".elice-aichat__spinner",
-    answer_selector=".elice-aichat__markdown",
-    stable_duration=1.0
-):
-    """
-    가장 안정적인 챗봇 답변 대기 방식:
-    1) 로딩 스피너가 사라질 때까지 대기
-    2) 답변 텍스트 요소가 나타날 때까지 대기
-    3) 텍스트가 일정 시간(stable_duration) 동안 변하지 않으면 완료
-    """
+    # ------------------------------------------------
+    # 2. 모든 답변 요소 가져오기
+    # ------------------------------------------------
 
-    # ------------------------------------
-    # 1) 로딩 스피너가 사라질 때까지 대기
-    # ------------------------------------
-    while True:
-        try:
-            self.browser.find_element(By.CSS_SELECTOR, spinner_selector)
+    def get_all_answers(self):
+        return self.browser.find_elements(
+            By.CSS_SELECTOR, ".elice-aichat__markdown"
+        )
+    
+    # ------------------------------------------------
+    # 3. 답변 대기 
+    # ------------------------------------------------
+
+    def wait_for_answer(
+        self,prev_answer_count,
+        spinner_selector="svg.MuiCircularProgress-svg",
+        answer_selector=".elice-aichat__markdown",
+        min_wait_time=10.0,
+        stable_duration=1.0
+    ):
+        start_time = time.time()
+
+        # 1️⃣ 최소 대기시간 동안은 무조건 기다림
+        while time.time() - start_time < min_wait_time:
             time.sleep(0.2)
-        except:
-            break  # 스피너가 없어짐 → 다음 단계 진행
 
-    # ------------------------------------
-    # 2) 답변 텍스트가 나타날 때까지 대기
-    # ------------------------------------
-    WebDriverWait(self.browser, 60).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, answer_selector))
-    )
 
-    # ------------------------------------
-    # 3) 텍스트 안정화 대기
-    # ------------------------------------
-    prev_text = ""
-    stable_start = None
+        print("⏳ 최소 대기 시간 경과")
 
-    while True:
-        current_text = self.browser.find_element(By.CSS_SELECTOR, answer_selector).text
+        # 2️⃣ 스피너가 있다면 사라질 때까지
+        try:
+            WebDriverWait(self.browser, 5).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, spinner_selector))
+            )
+            WebDriverWait(self.browser, 300).until_not(
+                EC.presence_of_element_located((By.CSS_SELECTOR, spinner_selector))
+            )
+        except Exception:
+            print("ℹ️ 스피너 감지되지 않음 (즉시 답변 가능)")
 
-        if current_text != prev_text:
-            prev_text = current_text
-            stable_start = time.time()  # 변화 시작
-        else:
-            # 일정 시간 동안 변화 없으면 끝
-            if stable_start and (time.time() - stable_start) >= stable_duration:
-                break
+        print("⏳ 스피너 대기 종료")
 
-        time.sleep(0.2)
+        # 3️⃣ 새 답변이 추가될 때까지 대기
+        WebDriverWait(self.browser, 300).until(
+            lambda d: len(d.find_elements(By.CSS_SELECTOR, answer_selector))
+            > prev_answer_count
+        )
+
+        print("⏳ 새 답변 감지")
+
+        # 4️⃣ 마지막 답변 텍스트 안정화
+        last_answer = self.get_all_answers()[-1] #역순으로 넣어 답변 누적
+
+        prev_text = ""
+        stable_start = None
+
+        while True:
+            current_text = last_answer.text.strip() 
+
+            if not current_text:
+                prev_text = ""
+                stable_start = None
+                time.sleep(0.3)
+                continue
+
+            if current_text != prev_text:
+                prev_text = current_text
+                stable_start = time.time()
+            else:
+                if stable_start and time.time() - stable_start >= stable_duration:
+                    break
+
+            time.sleep(0.3)
+
+        print("✅ 답변 안정화 완료")
 
 
     # ------------------------------------------------
-    # 3. 챗봇 답변 가져오기
+    # 4. 마지막 답변 가져오기
     # ------------------------------------------------
-
-    def get_answer(self):
-        """가장 최근 챗봇 답변 텍스트를 반환"""
-        element = self.browser.find_element(By.CSS_SELECTOR, ".elice-aichat__markdown")
-        return element.text
+    def get_last_answer(self):
+        return self.get_all_answers()[-1].text
 
     # ------------------------------------------------
-    # 4. 새 대화 시작 버튼 클릭
+    # 5. 새 대화 시작 버튼 클릭
     # ------------------------------------------------
     def new_chat(self):
         """
@@ -100,11 +129,6 @@ def wait_for_answer(
             )
         except Exception as e:
             print("새 대화 버튼 클릭 실패:", e)
-    # ------------------------------------------------
-    # 5. 단일 질문-답변 사이클 한번에 자동 실행
-    # ------------------------------------------------
-    def ask(self, question): # 질문 → 답변대기 → 결과 반환까지 한 번에 처리하는 Shortcut 메서드
-        
-        self.send_message(question)
-        self.wait_for_answer()
-        return self.get_answer()
+
+
+    
