@@ -1,4 +1,5 @@
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.keys import Keys
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -56,12 +57,9 @@ def wrong_rule_password_test():
 
             print(f"▶ 테스트 패스워드: {password}")
             password_input = driver.find_element(By.CSS_SELECTOR, "[placeholder='Password']")
-             # 1️⃣ 이전 값 제거
-            password_input.clear()
-
-            # 2️⃣ 새 비밀번호 입력
+            password_input.send_keys(Keys.CONTROL, "a")
+            password_input.send_keys(Keys.BACKSPACE)
             password_input.send_keys(password)
-
   
 
             # 4️⃣ 제출
@@ -85,14 +83,37 @@ def wrong_rule_password_test():
 
     finally:
         driver.quit()
+#TC07: 정상 패스워드 입력
+def right_password_test():
+
+    try:
+        driver = get_driver()
+        email = generate_unique_username()+"@naver.com"
+        password = "@qa12345"
+        name = "김성호"
+        print("▶ TC07: 비밀번호 조합 규칙 테스트 시작")
+        signup(driver, email, password, name)
+        welcome_text = WebDriverWait(driver, 10).until(
+             EC.presence_of_element_located(
+                (By.XPATH, "//*[contains(text(), 'Nice to meet you again')]")
+            )
+        )
+        assert welcome_text.is_displayed()
+        print("✔ 계정 정상적으로 생성")
+    finally:
+        driver.quit()
+
+
+
 
 
 
 
 
 if __name__ == "__main__":
-#    print("Test 5: 8자 미만 패스워드 테스트")
-#    short_password_test()
+    print("Test 5: 8자 미만 패스워드 테스트")
+    short_password_test()
     print("Test 6: 잘못된 조합의 패스워드 테스트")
     wrong_rule_password_test()
-    # print("Test3: 정상적 회원가입 
+    print("Test 7: 정상적인 비밀번호 입력 테스트")
+    right_password_test()
