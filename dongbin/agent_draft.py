@@ -75,6 +75,9 @@ try:
     rule_field.send_keys(agent_rule)
     print("[SUCCESS] 규칙 입력 완료")
     
+    #저장 하기도 전에 뒤로가기를 눌러서 1초 대기 걸어둠
+    time.sleep(1)
+    
     #뒤로가기 클릭
     back_btn = wait.until(EC.element_to_be_clickable(BACK_BUTTON))
     back_btn.click()

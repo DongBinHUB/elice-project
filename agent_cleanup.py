@@ -24,7 +24,7 @@ MY_AGENTS_BUTTON = (By.XPATH, "//a[@href='/ai-helpy-chat/agents/mine']")
 
 
 AGENT_CARDS = (By.XPATH, "//a[contains(@class, 'MuiCard-root')]")
-DRAFT_STATUS = (By.XPATH, ".//span[normalize-space()='초안']")
+DRAFT_STATUS = (By.XPATH, ".//span[normalize-space()='초안']") #나만보기, 초안 중 삭제하고 싶으면 수정
 DELETE_BUTTON_IN_CARD = (By.XPATH, ".//button[./*[name()='svg' and @data-icon='trash']]")
 CONFIRM_DELETE_BUTTON = (By.XPATH, "//button[normalize-space()='삭제']")
 

@@ -117,12 +117,13 @@ try:
     except Exception as e:
         print(f"[UNEXPECTED ERROR] 테스트 실행 중 오류 발생: {e}")
 
+# 에이전트 작성 만들기 버튼
     upload_btn = wait.until(
         EC.element_to_be_clickable(CREATE_BUTTON)
              )
     upload_btn.click() 
     print("[ACTION] '만들기' 클릭 후, 게시 설정 팝업의 최종 '저장' 버튼 클릭 시도...")      
-    
+# 만들기 최종 확인 버튼    
     final_save_button = wait.until(
         EC.element_to_be_clickable(CREATE_SAVE_BUTTON)
     )
