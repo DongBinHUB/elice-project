@@ -25,12 +25,12 @@ sys.path.append(project_root)
  
 LOGIN_URL = "https://accounts.elice.io/accounts/signin/me?continue_to=https%3A%2F%2Fqaproject.elice.io%2Fai-helpy-chat%2Fagents&lang=en-US&org=qaproject"
 
-#체크박스 선택자
-ALL_CHECKBOXES_SELECTOR = (By.CSS_SELECTOR, 'input[name="toolIds"][type="checkbox"]')
-STARTER_FIELD_XPATH = (By.XPATH, '//input[@placeholder="이 에이전트의 시작 대화를 입력하세요"]')
-SYSTEM_PROMPT_SELECTOR = (By.NAME, 'systemPrompt')
-NAME = (By.NAME, "name")
-SUMMARY_INPUT = (By.XPATH, "//input[@placeholder='에이전트의 짧은 설명을 입력해보세요']")
+
+ALL_CHECKBOXES_SELECTOR = (By.CSS_SELECTOR, 'input[name="toolIds"][type="checkbox"]') #체크박스 선택자
+STARTER_FIELD_XPATH = (By.XPATH, '//input[@placeholder="이 에이전트의 시작 대화를 입력하세요"]') #시작대화
+SYSTEM_PROMPT_SELECTOR = (By.NAME, 'systemPrompt') #규칙
+NAME = (By.NAME, "name") #이름
+SUMMARY_INPUT = (By.XPATH, "//input[@placeholder='에이전트의 짧은 설명을 입력해보세요']") #한줄소개
 
 #만들기 버튼
 CREATE_BUTTON = (By.XPATH, "//button[normalize-space()='만들기']")

@@ -14,7 +14,9 @@ from utils.login_module import perform_login
 LOGIN_URL = "https://accounts.elice.io/accounts/signin/me?continue_to=https%3A%2F%2Fqaproject.elice.io%2Fai-helpy-chat%2Fagents&lang=en-US&org=qaproject"
 MY_AGENTS_BUTTON = (By.XPATH, "//a[@href='/ai-helpy-chat/agents/mine']")
 MAKE_BUTTON = (By.XPATH, "//a[normalize-space()='만들기']")
-EDIT_BUTTON = (By.XPATH, "//button[.//svg[@data-icon='pen']]")
+EDIT_BUTTON = (By.XPATH, "//button[.//*[name()='svg' and @data-icon='pen']]") # 수정버튼
+AGENT_LIST_CONTAINER = (By.XPATH, "//div[@data-testid='virtuoso-item-list']") # 리스트
+FIRST_AGENT_CARD_LOCATOR = (By.XPATH, "(//a[contains(@class, 'MuiCard-root')])[1]") #첫 번째 리스트
 
 
 driver = login_driver(LOGIN_URL) 
@@ -42,11 +44,20 @@ try:
     
     time.sleep(1)
     
-    edit_btn = wait.until(EC.element_to_be_clickable(EDIT_BUTTON))
-    edit_btn.click()
-    print("[SUCCESS] 내 에이전트 클릭 완료")
     
     
+    try:
+        wait.until(EC.presence_of_all_elements_located(AGENT_LIST_CONTAINER)) 
+        print("[INFO] 에이전트 카드 목록 로딩 확인.")
+      
+        
+        
+        agent_edit = wait.until(EC.element_to_be_clickable(EDIT_BUTTON))
+        agent_edit.click()
+        print("[INFO] 에이전트 수정 버튼 클릭 확인.")
+    
+    except TimeoutException:
+        print("[FAILURE] 요소를 찾지 못했습니다. 목록에 수정할 에이전트가 없거나 네트워크 지연이 심합니다.")
 
 except Exception as e:
     print(f"\n[CRITICAL ERROR] 자동화 프로세스 중 예상치 못한 오류 발생.")

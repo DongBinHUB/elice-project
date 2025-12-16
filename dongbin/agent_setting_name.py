@@ -16,9 +16,6 @@ from utils.driver_setup import login_driver
 from utils.login_module import perform_login
 from utils.common_actions import click_make_button
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.join(current_dir, '..')
-sys.path.append(project_root)
 
 VALID_NAME = "동빈"
 LONG_NAME = "0"*101
