@@ -1,6 +1,7 @@
 import os
 import time
 import random
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -12,10 +13,13 @@ from selenium.common.exceptions import NoSuchElementException
 
 
 
+
 # 기본 설정
 BASE_LOGIN_URL = "https://accounts.elice.io/accounts/signin/me?continue_to=https%3A%2F%2Fqaproject.elice.io%2Fai-helpy-chat&lang=en-US&org=qaproject"
 BASE_SIGNUP_URL ="https://accounts.elice.io/accounts/signup/method?continue_to=https%3A%2F%2Fqaproject.elice.io%2Fai-helpy-chat%3FisFirstLogin%3Dtrue&lang=en-US&org=qaproject"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+SCREENSHOT_DIR = os.path.join(BASE_DIR, "screenshots")
 # -----------------------------
 # 드라이버 생성
 # -----------------------------
@@ -28,6 +32,27 @@ def get_driver():
     driver = webdriver.Chrome(service=service, options=chrome_options)
     driver.implicitly_wait(10)
     return driver
+#스크린샷 설정
+def save_screenshot(driver, test_type: str, name: str):
+    """
+    test_type: signup_email / signup_pw / signup_name
+    name: TC명
+    """
+
+    test_dir = os.path.join(SCREENSHOT_DIR, test_type)
+
+    if not os.path.exists(test_dir):
+        os.makedirs(test_dir)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{name}_{timestamp}.png"
+    filepath = os.path.join(test_dir, filename)
+
+    driver.save_screenshot(filepath)
+    print(f"📸 Screenshot saved: {filepath}")
+
+    return filepath
+
 
 
 # -----------------------------
@@ -136,7 +161,7 @@ def fill_signup_form(driver, email=None, password=None, name=None):
 
 def submit_signup(driver):
     click_element(driver, "button[type='submit']")
-    
+
 def signup(driver, email, password, name):
     open_signup_page(driver)
     fill_signup_form(driver, email, password, name)

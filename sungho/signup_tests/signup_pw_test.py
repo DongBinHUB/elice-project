@@ -24,6 +24,7 @@ def short_password_test():
             error_element = driver.find_element(By.XPATH, "//p[contains(text(), 'Please make your password stronger!')]")
             print("✔ 오류 메시지 확인됨:", error_element.text)
             print("✔ TC5 통과!")
+            save_screenshot(driver,"signup_pw","TC05_short_ps")
             time.sleep(2)
         except NoSuchElementException:
             print("❌ Please make your password stronger! 메시지를 찾지 못했음")
@@ -73,6 +74,8 @@ def wrong_rule_password_test():
                     )
                 )
                 print("✔ 오류 메시지 확인:", error_element.text)
+                save_screenshot(driver,"signup_pw","TC06_wrong_rule_pw")
+                time.sleep(1)
             except TimeoutException:
                 print("❌ 오류 메시지를 찾지 못했음")
 
@@ -100,14 +103,9 @@ def right_password_test():
         )
         assert welcome_text.is_displayed()
         print("✔ 계정 정상적으로 생성")
+        save_screenshot(driver,"signup_pw","TC07_right_pw")
     finally:
         driver.quit()
-
-
-
-
-
-
 
 
 if __name__ == "__main__":

@@ -29,6 +29,7 @@ def space_name_test():
             print("TC08 통과")
         except NoSuchElementException:
             print("❌ Please enter your name! 메시지를 찾지 못했음")
+            save_screenshot(driver,"signup_name","TC08_space_name")
     finally:
         driver.quit()
         
@@ -43,6 +44,7 @@ def too_long_name_test():
         password = "@qa12345"
         name = "가나다라마바사아자차카타파하아야어여오유우이"
         signup(driver,email,password,name)
+        save_screenshot(driver,"signup_name","TC09_long_name_input")
         try:
             error_element = driver.find_element(By.XPATH, "//p[contains(text(), 'Please enter your name')]")
             assert "enter your name" in error_element.text
@@ -52,12 +54,13 @@ def too_long_name_test():
         except NoSuchElementException:
             print("❌ 어떠한 오류메시지를 찾지 못했음")
             print("❌ TC009: 테스트 실패")
+            save_screenshot(driver,"signup_name","TC09_long_name")
     finally:
         driver.quit()
 #TC010: 정상적인 이름 입력 테스트
 def right_name_test():
     try:
-        print("▶ TC010: 긴 제목 입력 테스트")
+        print("▶ TC010: 정상적인 이름 입력 테스트")
         driver = get_driver()
         email = generate_unique_username()+"@naver.com"
         password = "@qa12345"
@@ -70,6 +73,7 @@ def right_name_test():
         )
         assert welcome_text.is_displayed()
         print("✔ 계정 정상적으로 생성")
+        save_screenshot(driver,"signup_name","TC10_right_name")
         print("TC010 테스트 성공")
     finally:
         driver.quit()
