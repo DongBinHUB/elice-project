@@ -22,6 +22,9 @@ BACK_BUTTON = (By.XPATH, "//button[@aria-label='뒤로가기']")
 MY_AGENTS_BUTTON = (By.XPATH, "//a[@href='/ai-helpy-chat/agents/mine']")
 MAKE_BUTTON = (By.XPATH, "//a[normalize-space()='만들기']")
 
+#나만보기
+PRIVATE_STATE = (By.XPATH, "//span[normalize-space()='나만보기']")
+
 #초안 선택자
 DRAFT_CARD_LOCATOR = (By.XPATH, f"//a[contains(@class, 'MuiCard-root')]//p[text()='{agent_name}']/ancestor::a//span[normalize-space()='초안']")
 
@@ -88,12 +91,12 @@ try:
     
     wait_long = WebDriverWait(driver, 30)
  
-    draft_card = wait_long.until(EC.visibility_of_element_located(DRAFT_CARD_LOCATOR))
+    private_view = wait_long.until(EC.visibility_of_element_located(DRAFT_CARD_LOCATOR))
     
-    print(f"\n[PASS] 초안 저장 테스트 성공! 에이전트 '{agent_name}'의 '초안' 상태 확인 완료.")
+    print(f"\n[PASS] 에이전트 저장 테스트 성공! 에이전트 '{agent_name}'의 '초안' 상태 확인 완료.")
     
 except TimeoutException:
-    print(f"\n[FAILURE] 초안 저장 실패. '{agent_name}' 이름의 '초안' 카드를 찾지 못했습니다. (30초 대기 시간 초과)")
+    print(f"\n[FAILURE] '{agent_name}' 이름의 '초안'을 찾지 못했습니다. (30초 대기 시간 초과)")
     
 except Exception as e:
     print(f"\n[CRITICAL ERROR] 자동화 프로세스 중 예상치 못한 오류 발생.")
