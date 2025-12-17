@@ -1,0 +1,72 @@
+import pytest
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utills import *
+
+
+
+
+
+# -----------------------------
+# TC1: 정상 로그인
+# -----------------------------
+def test_login_success(driver):
+    login(driver, "qa3team03@elicer.com", "@qa12345")
+
+    icon = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located(
+            (By.CSS_SELECTOR, '[data-testid="PersonIcon"]')
+        )
+    )
+
+    assert icon.is_displayed()
+
+
+# -----------------------------
+# TC2: 잘못된 비밀번호
+# -----------------------------
+def test_wrong_password(driver):
+    login(driver, "qa3team03@elicer.com", "!qa12345")
+
+    error = WebDriverWait(driver, 5).until(
+        EC.presence_of_element_located(
+            (By.XPATH, "//p[contains(text(), 'Email or password does not match')]")
+        )
+    )
+
+    assert "Email or password does not match" in error.text
+
+
+# -----------------------------
+# TC3: 8글자 미만 비밀번호
+# -----------------------------
+def test_short_password(driver):
+    login(driver, "qateam03@alicer.com", "12345")
+
+    error = WebDriverWait(driver, 5).until(
+        EC.presence_of_element_located(
+            (By.XPATH, "//p[contains(text(), 'Please enter a password of at least 8 digits.')]")
+        )
+    )
+
+    assert "at least 8 digits" in error.text
+
+
+# -----------------------------
+# TC4: 미가입 계정 로그인
+# -----------------------------
+def test_nonexist_user_login(driver):
+    login(driver, "nonexist@alicer.com", "@qa12345")
+
+    error = WebDriverWait(driver, 5).until(
+        EC.presence_of_element_located(
+            (By.XPATH, "//p[contains(text(), 'unsigned user')]")
+        )
+    )
+
+    assert "unsigned user" in error.text
