@@ -85,7 +85,7 @@ try:
                 print("[FAILURE] 삭제 확인 팝업이 나타나지 않아 삭제를 완료하지 못했습니다.")
                 continue
         
-        print(f"\n[PASS] 총 {deleted_count}개의 에이전트를 성공적으로 삭제했습니다.")
+        print(f"\n[PASS] 총 {deleted_count}개의  에이전트를 성공적으로 삭제했습니다.")
         
 except Exception as e:
   

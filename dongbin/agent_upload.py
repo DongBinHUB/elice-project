@@ -144,10 +144,6 @@ try:
 
     print("\n[ALL PASS] 모든 에이전트 생성 테스트가 완료되었습니다.")
         
-
-    
-    
-    
     
 except Exception as e:
     print(f"\n[CRITICAL ERROR] 자동화 프로세스 중 예상치 못한 오류 발생.")
