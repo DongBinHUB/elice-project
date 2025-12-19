@@ -82,14 +82,14 @@ def wait_clickable(driver, selector, by=By.CSS_SELECTOR, timeout=10):
     return WebDriverWait(driver, timeout).until(
         EC.element_to_be_clickable((by,selector))
     )
-
+#클릭할 수 있는 요소를 찾고 찾으면 자동으로 클릭해주는 함수
 def click_element(driver, selector: str):
     """Click element with data-testid."""
     element = wait_clickable(driver, selector)
     element.click()
     return element
 
-
+#입력필드를 찾고 자동으로 타이핑 해주는 함수
 def type_text(driver, selector: str, text: str):
     """Type text into element with data-testid."""
     element = wait_for_element(driver, selector)
@@ -97,9 +97,10 @@ def type_text(driver, selector: str, text: str):
     element.send_keys(text)
     return element
 
+#임의의 회원가입 테스트 이메일 생성
 def generate_unique_username():
-    num = random.randint(1000, 9999)
-    return f"testuser{num}"
+    num = random.randint(10000, 99999)
+    return f"testuser{num:05d}"
 
 # 공통 로그인 함수
 # -----------------------------
@@ -138,9 +139,7 @@ def logout(driver):
             )
         )
     assert welcome_text.is_displayed()
-    print("TC17:정상적으로 로그아웃 완료")
-
-    time.sleep(1)
+    
 #회원가입 기능 
 def open_signup_page(driver):
     navigate_to_signup(driver)
@@ -158,7 +157,7 @@ def fill_signup_form(driver, email=None, password=None, name=None):
 
 def submit_signup(driver):
     click_element(driver, "button[type='submit']")
-
+#위의 것들을 합쳐 회원가입이 한번에 되는 회원가입 브라우저 생성->함수 입력필드에 타이핑 후 agree all체크->create account눌러주는 함수 
 def signup(driver, email, password, name):
     open_signup_page(driver)
     fill_signup_form(driver, email, password, name)

@@ -10,7 +10,7 @@ from utills import (
 )
 
 # ------------------------
-# 공통 입력 함수
+# 체크박스 테스트 공통 입력 함수
 # ------------------------
 def checkbox_fill_signup(driver, email=None, password=None, name=None):
     if email is not None:

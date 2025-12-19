@@ -4,8 +4,9 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utills import *
 
-# TC1 이메일 공란 회원가입 테스트
+#TC1 이메일 공란 회원가입 테스트
 def test_space_email(driver):
+    print("\n▶ TC001: 이메일 공란 입력 테스트")
     email = ""
     password = "@qa12345"
     name = "김성호"
@@ -19,10 +20,12 @@ def test_space_email(driver):
     time.sleep(1)
 
     assert msg != ""  # 브라우저 validation 발생 확인
+    print("▶ TC001: 이름 공란 입력 테스트 성공")
 
 
 # TC2 잘못된 이메일 형식
 def test_wrong_email_type(driver):
+    print("\n▶ TC002: 잘못된 이메일 입력 테스트")
     email = generate_unique_username() + "naver.com"
     password = "@qa12345"
     name = "김성호"
@@ -37,12 +40,13 @@ def test_wrong_email_type(driver):
 
     assert "Email address is incorrect." in error.text
     save_screenshot(driver, "signup_email", "TC02_wrong_email_type")
+    print("▶ TC002: 잘못된 이메일 입력 테스트 성공")
 
 
 # TC3 정상 회원가입
 def test_right_signup(driver,valid_signup_data):
-    
 
+    print("\n▶ TC003: 정상 회원가입 테스트")
     signup(driver, **valid_signup_data)
 
     WebDriverWait(driver, 15).until(
@@ -55,14 +59,20 @@ def test_right_signup(driver,valid_signup_data):
     )
     assert icon.is_displayed()
     save_screenshot(driver, "signup_email", "TC03_signup_success")
+    print("▶ TC003: 정상 회원가입 테스트 성공")
 
 # TC4 중복 이메일 회원가입
 def test_duplicate_email(driver,valid_signup_data):
 
+    print("\n▶ TC004: 중복된 이메일 입력 테스트")
+
     signup(driver,**valid_signup_data)
+    WebDriverWait(driver, 10).until(
+                EC.url_contains("/ai-helpy-chat")#회원가입 정상적으로 됐는지 확인
+        )
 
     open_signup_page(driver)
-    fill_signup_form(driver,valid_signup_data["email"])
+    type_text(driver, "Email", valid_signup_data["email"])# 회원가입했던 이메일 입력 
 
     error = WebDriverWait(driver, 5).until(
         EC.presence_of_element_located(
@@ -72,3 +82,4 @@ def test_duplicate_email(driver,valid_signup_data):
 
     assert "already registered email" in error.text
     save_screenshot(driver, "signup_email", "TC04_duplicate_email")
+    print("▶ TC004: 중복된 이메일 입력 테스트 성공")
