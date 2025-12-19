@@ -1,4 +1,9 @@
-#로그인 계정 ID, PW
+import os
+from dotenv import load_dotenv
 
-USER_EMAIL = "qa3team03@elicer.com"
-USER_PASSWORD = "@qa12345"
+# .env 파일의 내용을 환경 변수로 로드합니다.
+load_dotenv()
+
+# 환경 변수에서 값을 가져옵니다.
+USER_EMAIL = os.getenv("USER_EMAIL")
+USER_PASSWORD = os.getenv("USER_PASSWORD")
