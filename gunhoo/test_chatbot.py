@@ -1,4 +1,3 @@
-import time
 import pytest
 import os
 from dotenv import load_dotenv # .env 로딩
@@ -89,7 +88,7 @@ def test_chatbot_by_tc(browser, tc):
             "answer": answer
         })
 
-        # time.sleep(1)
+        
 
     # TC 단위로 JSON 저장
     save_json(f"{tc['tc_id']}.json", {      # 파일명
@@ -99,6 +98,6 @@ def test_chatbot_by_tc(browser, tc):
 
     # TC 종료 시 새 채팅 (개별 / 연속 공통)
     tester.new_chat()
-    # time.sleep(1)
+    
 
     
