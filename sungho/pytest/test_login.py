@@ -6,7 +6,8 @@ from selenium.common.exceptions import TimeoutException
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utills import *
+from utills import login,save_screenshot
+
 
 
 
@@ -79,4 +80,5 @@ def test_nonexist_user_login(driver):
         assert "unsigned user" in error.text
     except TimeoutException:
         print("TC016: 미가입 계정 로그인 테스트 실패")
+        save_screenshot(driver, "signup_emmail", "TC16_nonexist_user_login_fail")
         pytest.fail("이메일이나 패스워드가 틀렸다는 메세지만 뜸, 미가입 계정인 지 알 수 없음")

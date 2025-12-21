@@ -1,9 +1,12 @@
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import pytest
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utills import *
+from utills import signup,generate_unique_username,save_screenshot
 
 
 # TC08: 이름 미입력
@@ -16,13 +19,14 @@ def test_space_name(driver):
 
     signup(driver, email, password, name)
 
+    #이름 공란시 나오는 문구 확인
     name_input = driver.find_element(By.XPATH, "//input[@placeholder='Name']")
     msg = driver.execute_script(
         "return arguments[0].validationMessage;", name_input
     )
     print("오류 메세지:", msg)
+    #문구가 ""가 아니면 테스트 통과
     assert msg !=""
-    save_screenshot(driver, "signup_name", "TC08_space_name")
     print("TC008: 이름 공란 입력 테스트 성공")
 
 
@@ -36,7 +40,7 @@ def test_too_long_name(driver):
 
     signup(driver, email, password, name)
     save_screenshot(driver, "signup_name", "TC09_long_name_input")
-
+    #이름이 너무 깁니다 라는 문구가 나오면 테스트 통과
     try:
         error =  WebDriverWait(driver, 2).until(
         EC.presence_of_element_located(
@@ -44,6 +48,7 @@ def test_too_long_name(driver):
         )
     )
         assert "too long" in error.text
+        #이름이 너무 길다는 문구를 찾지 못한다면, 테스트 실패. 실패한 화면 스크린샷 찍음,실패한 원인 출력
     except TimeoutException:
         save_screenshot(driver, "signup_name", "TC09_long_name_fail")
         print("TC009: 긴 이름 입력 테스트 실패")
@@ -65,5 +70,4 @@ def test_right_name(driver,valid_signup_data):
         )
     )
     assert icon.is_displayed()
-    save_screenshot(driver, "signup_name", "TC10_right_name")
     print("TC010: 정상적인 이름 입력 테스트 성공")

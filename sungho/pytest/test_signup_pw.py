@@ -1,4 +1,4 @@
-from selenium.common.exceptions import TimeoutException
+
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -9,7 +9,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from utills import *
+from utills import (
+    signup,
+    save_screenshot,
+    fill_signup_form,
+    generate_unique_username,
+    open_signup_page,
+    submit_signup)
 
 
 # TC05: 8자 미만 비밀번호 테스트
@@ -28,8 +34,8 @@ def test_short_password(driver):
         )
     )
 
-    save_screenshot(driver, "signup_pw", "TC05_short_password")
     assert "Please make your password stronger!" in error.text # 더 강하게 pw를 만들어라 라는 문구가 error.text에 있으면 테스트 성공 
+    print("TC005 테스트 성공")
 
 
 # TC06: 비밀번호 조합 규칙 테스트
@@ -43,7 +49,7 @@ def test_wrong_rule_password(driver):
 
     open_signup_page(driver) #회원가입 창 열어주는 함수
 
-    email = generate_unique_username() + "@naver.com"
+    email = generate_unique_username() + "@naver.com" #임의로 테스트할 이메일을 만들어주는 함수
     name = "김성호"
     fill_signup_form(driver, email=email, name=name) #회원가입 입력필드에 입력과 이용약관까지 체크 해주는 함수. signup과는 다르다
 
@@ -63,6 +69,7 @@ def test_wrong_rule_password(driver):
 
         save_screenshot(driver, "signup_pw", f"TC06_wrong_rule_{password}")
         assert "Please make your password stronger!" in error.text
+        print("TC006 테스트 성공")
 
 
 # TC07: 정상 비밀번호 입력
@@ -80,5 +87,5 @@ def test_right_password(driver,valid_signup_data): # valid_signup_data= confites
         )
     )
     assert icon.is_displayed()
-    save_screenshot(driver, "signup_pw", "TC07_right_password")
+    print("TC007 테스트 성공")
     
