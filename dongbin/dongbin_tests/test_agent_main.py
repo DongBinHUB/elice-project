@@ -16,6 +16,8 @@ dongbin_path = os.path.join(project_root, 'dongbin')
 if dongbin_path not in sys.path:
     sys.path.insert(0, dongbin_path)
 
+
+
 # --- 선택자 설정 ---
 NAME_INPUT = (By.NAME, "name")
 SUMMARY_INPUT = (By.XPATH, "//input[@placeholder='에이전트의 짧은 설명을 입력해보세요']")
@@ -27,7 +29,7 @@ CREATE_BUTTON = (By.XPATH, "//button[normalize-space()='만들기']")
 CREATE_SAVE_BUTTON = (By.XPATH, "//button[@type='submit' and normalize-space()='저장']")
 
 def test_full_agent_creation_with_file_and_tools(driver):
-    """파일 업로드 및 도구 다중 선택을 포함한 에이전트 생성 전체 테스트"""
+    """에이전트 생성 전체 테스트"""
     wait = WebDriverWait(driver, 15)
     
 

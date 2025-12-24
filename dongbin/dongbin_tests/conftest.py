@@ -12,7 +12,6 @@ if parent_dir not in sys.path:
 
 print(f"\n[DEBUG] Project Root added to sys.path: {parent_dir}")
 
-import pytest
 from utils.driver_setup import login_driver
 from utils.login_module import perform_login
 from utils.credentials import USER_EMAIL, USER_PASSWORD

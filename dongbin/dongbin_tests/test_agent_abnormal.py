@@ -38,7 +38,7 @@ def test_agent_abnormal_input(driver):
     print("[SUCCESS] 에이전트 대화 생성 모드 진입")
 
     # 4. 비정상 질문 반복 테스트 (4회)
-    scenario_questions = ["ㅁㄴㅇ123"] * 4
+    scenario_questions = ["ㅁㄴㅇ1", "12345", "!!!???", "ㄱㄴㄷㄹ"]
     
     for i, question in enumerate(scenario_questions, 1):
         # 질문 전송 전 현재 말풍선 개수 파악
@@ -61,8 +61,14 @@ def test_agent_abnormal_input(driver):
             "user_input": question,
             "ai_response": final_answer
         })
-        
-        assert len(final_answer) > 0, f"{i}번째 응답이 비어있습니다."
+        try:
+            
+            assert len(final_answer) > 0, f"{i}번째 응답이 비어있습니다."
+        except AssertionError as e:
+                # 실패 시 스크린샷을 찍어 원인 파악
+                driver.save_screenshot(f"fail_step_{i}.png")
+                print(f"[FAIL] {i}번째에서 AI 응답이 없습니다. 스크린샷 확인 필요")
+                raise e
 
     # 5. 테스트 결과 JSON 저장
     save_abnormal_log(conversation_history)

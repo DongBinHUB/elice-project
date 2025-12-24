@@ -19,11 +19,11 @@ def test_cleanup_test_agents(driver):
     """생성된 테스트용 에이전트들을 상태별로 필터링하여 일괄 삭제"""
     wait = WebDriverWait(driver, 10)
     while True:
-        # 1. 매번 목록을 새로 읽어옵니다 (Stale Element 에러 방지)
+        # 1. 매번 목록을 새로 읽어옵니다
         driver.get(MINE_URL)
-        time.sleep(2) 
+     
         
-        # 2. 삭제 대상 카드들 찾기
+        # 2. 삭제 대상 찾기
         cards = driver.find_elements(By.CSS_SELECTOR, "a[class*='MuiCard-root']")
         
         if not cards:
@@ -44,8 +44,9 @@ def test_cleanup_test_agents(driver):
             confirm_btn = wait.until(EC.element_to_be_clickable((By.XPATH, confirm_xpath)))
             confirm_btn.click()
             
+            wait.until(EC.invisibility_of_element_located((By.XPATH, "//div[@role='dialog']")))
+            
             print("[SUCCESS] 1개 삭제 완료. 다음 카드로 이동합니다.")
-            time.sleep(2) 
             
         except Exception as e:
             print(f"[ERROR] 삭제 중 오류 발생: {e}")
